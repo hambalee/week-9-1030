@@ -13,7 +13,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
@@ -28,8 +28,8 @@ jobs:
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners
     # Consider using larger runners for possible analysis time improvements.
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    runs-on: ${{ 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.language == 'go' && 120) || 360 }}
     permissions:
       actions: read
       contents: read
