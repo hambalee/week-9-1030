@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-deployment
+  labels:
+    name: go-deployment
+spec:
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      containers:
+        - name: go-container
+          image: ghcr.io/hambalee/week-9-1030:ghcr.io/hambalee/week-9-1030:dev-dd2b97f
+          ports:
+            - containerPort: 8081
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "250m"
