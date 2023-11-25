@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: develop
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -27,12 +29,15 @@ jobs:
 
       - name: Pull Retag Push
         run: |
-          echo "git-branch\n$(git branch)"
-          echo "git2\n$(git rev-parse)"
-          echo "git3\n$(git rev-parse --short)"
-          echo "git4\n$(git rev-parse --short develop)"
-          echo "git5\n$(git rev-parse --short HEAD)"
-          echo "git6\n$(git rev-parse --short HEAD~1)"
+          echo "git-branch: $(git branch)"
+          echo "git2: $(git rev-parse)"
+          echo "git3: $(git rev-parse --short)"
+          echo "git4: $(git rev-parse --short develop)"
+          echo "git5: $(git rev-parse --short HEAD)"
+          echo "git6: $(git rev-parse --short HEAD~1)"
+
+          export GITHUB_SHA=${{  github.sha }}
+          echo "GITHUB_SHA: $GITHUB_SHA"
 
           export COMMIT_ID=$(git rev-parse --short=7 develop)
           echo "COMMIT_ID: $COMMIT_ID"
