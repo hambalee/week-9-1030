@@ -60,7 +60,7 @@ jobs:
 
           # docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$(echo "$COMMIT_ID")
           # docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
-          
+
           export NEW_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{  github.sha }}
           echo "NEW_IMAGE: $NEW_IMAGE"
 
@@ -90,14 +90,16 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          # export COMMIT_ID=$(git rev-parse --short=7 develop)
+          export COMMIT_ID=$(git rev-parse --short=7 develop)
           # git log --merges --first-parent --format=%h develop..main | head -1
           # git log --merges --first-parent --format=%h develop..main -n 1
-          export COMMIT_ID=$(git log --merges -n 1 --format=%h main)
+          # export COMMIT_ID=$(git log --merges -n 1 --format=%h main)
           export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
           echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           # docker tag your-local-image:tag ghcr.io/${{ github.repository_owner }}/your-ghcr-repo:tag
           # docker push ghcr.io/${{ github.repository_owner }}/your-ghcr-repo:tag
-          export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
+          export COMMIT_ID_MAIN_MERGE=$(git log --merges -n 1 --format=%h main)
+          export NEW_IMAGE_WITH_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prod-$COMMIT_ID_MAIN_MERGE
+          # export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
           docker tag $OLD $NEW_IMAGE_WITH_TAG
           docker push $NEW_IMAGE_WITH_TAG
