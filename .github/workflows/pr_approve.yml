@@ -27,6 +27,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=prod-
+
       - name: Pull Retag Push
         run: |
           echo "git-branch: $(git branch)"
@@ -53,6 +63,9 @@ jobs:
           
           export NEW_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{  github.sha }}
           echo "NEW_IMAGE: $NEW_IMAGE"
+
+          export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
+          echo "NEW_IMAGE_WITH_TAG: $NEW_IMAGE_WITH_TAG"
 
           echo "---"
           # docker tag $IMAGE_DEV $NEW_IMAGE
