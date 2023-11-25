@@ -69,7 +69,7 @@ jobs:
 
           export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
           echo "OLD: $OLD"
-          docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
+          # docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
 
 
           echo "---"
@@ -78,10 +78,19 @@ jobs:
           # docker push
 
           export COMMIT_ID=$(git rev-parse --short=7 develop)
-          export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
+          # export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
           docker pull $OLD
           export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
           docker tag $OLD $NEW_IMAGE_WITH_TAG
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
-          docker push $NEW_IMAGE_WITH_TAG
+          # echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          # docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
+          # docker push $NEW_IMAGE_WITH_TAG
+          echo "docker ps -a"
+          docker ps -a
+
+      - name: Push to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          # docker tag your-local-image:tag ghcr.io/${{ github.repository_owner }}/your-ghcr-repo:tag
+          # docker push ghcr.io/${{ github.repository_owner }}/your-ghcr-repo:tag
+          $NEW_IMAGE_WITH_TAG
