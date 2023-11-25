@@ -90,7 +90,10 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          export COMMIT_ID=$(git rev-parse --short=7 develop)
+          # export COMMIT_ID=$(git rev-parse --short=7 develop)
+          # git log --merges --first-parent --format=%h develop..main | head -1
+          # git log --merges --first-parent --format=%h develop..main -n 1
+          export COMMIT_ID=$(git log --merges -n 1 --format=%h main)
           export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
           echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           # docker tag your-local-image:tag ghcr.io/${{ github.repository_owner }}/your-ghcr-repo:tag
