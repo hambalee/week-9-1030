@@ -67,6 +67,17 @@ jobs:
           export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
           echo "NEW_IMAGE_WITH_TAG: $NEW_IMAGE_WITH_TAG"
 
+          export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
+          echo "OLD: $OLD"
+
           echo "---"
-          # docker tag $IMAGE_DEV $NEW_IMAGE
+
+          # docker tag $OLD $NEW_IMAGE_WITH_TAG
           # docker push
+
+          export COMMIT_ID=$(git rev-parse --short=7 develop)
+          export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
+          docker pull $OLD
+          export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
+          docker tag $OLD $NEW_IMAGE_WITH_TAG
+          docker push
