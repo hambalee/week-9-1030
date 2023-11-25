@@ -69,6 +69,8 @@ jobs:
 
           export OLD=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
           echo "OLD: $OLD"
+          docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
+
 
           echo "---"
 
@@ -80,4 +82,6 @@ jobs:
           docker pull $OLD
           export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
           docker tag $OLD $NEW_IMAGE_WITH_TAG
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q 'auths' && echo "Docker is logged in." || echo "Docker is not logged in."
           docker push $NEW_IMAGE_WITH_TAG
