@@ -1,0 +1,47 @@
+name: PR Approve
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Retag Push
+        run: |
+          export COMMIT_ID=$(git rev-parse --short=7 develop)
+          echo "COMMIT_ID: $COMMIT_ID"
+
+          export IMAGE_DEV=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$(echo "$COMMIT_ID")
+          echo "IMAGE_DEV: $IMAGE_DEV"
+
+          export IMAGE_DEV2=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
+          echo "IMAGE_DEV2: $IMAGE_DEV2"
+
+          # docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$(echo "$COMMIT_ID")
+          # docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-$COMMIT_ID
+          
+          export NEW_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{  github.sha }}
+          echo "NEW_IMAGE: $NEW_IMAGE"
+
+          echo "---"
+          # docker tag $IMAGE_DEV $NEW_IMAGE
+          # docker push
