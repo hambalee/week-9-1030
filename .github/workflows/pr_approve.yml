@@ -80,4 +80,4 @@ jobs:
           docker pull $OLD
           export NEW_IMAGE_WITH_TAG=${{ steps.meta.outputs.tags }}
           docker tag $OLD $NEW_IMAGE_WITH_TAG
-          docker push
+          docker push $NEW_IMAGE_WITH_TAG
