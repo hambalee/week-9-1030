@@ -15,6 +15,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
+  # IMAGE_NAME: ${{ github.repository }}
   IMAGE_NAME: ${{ github.repository }}
   CLUSTER_NAME: https://tcc-01.th1.proen.cloud/api/
 
@@ -104,6 +105,13 @@ jobs:
         wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
         chmod +x /usr/bin/yq
         export IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}
+
+        echo "env.REGISTRY: ${{ env.REGISTRY }}"
+        echo "env.IMAGE_NAME: ${{ env.IMAGE_NAME }}"
+        echo "needs.build.outputs.image_tag: ${{ needs.build.outputs.image_tag }}"
+        echo "steps.meta.outputs.tags: ${{ steps.meta.outputs.tags }}"
+
+        # export IMAGE_TAG=ghcr.io /   hambalee/week-9-1030  :ghcr.io/hambalee/week-9-1030   : dev-dd2b97f
         echo "$IMAGE_TAG"
         yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE_TAG) ' manifest/${{ vars.ENV }}/deployment.yaml
 
