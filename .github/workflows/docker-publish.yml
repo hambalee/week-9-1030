@@ -102,7 +102,6 @@ jobs:
 
     - name: Update image from registry
       run: |-
-        echo "git-branch\n$(git branch)"
         wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
         chmod +x /usr/bin/yq
         export IMAGE_TAG=${{ needs.build.outputs.image_tag }}

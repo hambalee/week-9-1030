@@ -27,6 +27,13 @@ jobs:
 
       - name: Pull Retag Push
         run: |
+          echo "git-branch\n$(git branch)"
+          echo "git2\n$(git rev-parse)"
+          echo "git3\n$(git rev-parse --short)"
+          echo "git4\n$(git rev-parse --short develop)"
+          echo "git5\n$(git rev-parse --short HEAD)"
+          echo "git6\n$(git rev-parse --short HEAD~1)"
+
           export COMMIT_ID=$(git rev-parse --short=7 develop)
           echo "COMMIT_ID: $COMMIT_ID"
 
